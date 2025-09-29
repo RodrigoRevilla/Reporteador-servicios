@@ -1,0 +1,91 @@
+openapi: 3.0.3
+info:
+  title: PDF Generator API
+  description: API para generar y visualizar PDFs
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Servidor local
+
+paths:
+  /generate:
+    post:
+      summary: Genera un PDF
+      description: Recibe datos en JSON y genera un PDF
+      operationId: generatePDF
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TemplateRequest"
+      responses:
+        "200":
+          description: PDF generado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "PDF generado correctamente"
+        "400":
+          description: Error en la solicitud
+        "405":
+          description: Método no permitido
+
+  /view:
+    get:
+      summary: Visualiza el PDF generado
+      description: Retorna el archivo PDF generado
+      operationId: viewPDF
+      responses:
+        "200":
+          description: Retorna el PDF generado
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+
+components:
+  schemas:
+    TemplateRequest:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            nombre:
+              type: string
+            cargo:
+              type: string
+            ubicacion:
+              type: string
+            obra:
+              type: string
+            tramite:
+              type: string
+            name:
+              type: string
+            num_folio:
+              type: string
+            num_acta:
+              type: string
+            levantada:
+              type: string
+            dd:
+              type: string
+            mmmm:
+              type: string
+            yyyy:
+              type: string
+            mm:
+              type: string
+            url:
+              type: string
+              format: uri
+        template:
+          type: string

@@ -1,0 +1,22 @@
+services:
+  app:
+    container_name: api-go
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GOGSUSER: 
+        GOGSPASS: 
+    image: go-ap1
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    volumes:
+       - "./uuid_storage:/uuid_storage"
+    networks:
+      - go-network
+
+networks: 
+  go-network:
+    driver: bridge

@@ -1,0 +1,8 @@
+# El paquete que se generará
+package: http
+# El nombre del archivo generado
+output: pkg/server/http/api.gen.go
+# La ubicación de los modelos y handlers generados
+generate:
+  models: true
+  chi-server: true
