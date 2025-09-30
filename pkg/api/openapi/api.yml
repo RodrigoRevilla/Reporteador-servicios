@@ -50,6 +50,30 @@ paths:
                 type: string
                 format: binary
 
+  /pdf/ventas:
+    post:
+      summary: Genera un PDF del reporte de ventas
+      description: Recibe un listado de ventas en JSON y genera un PDF
+      operationId: generateReporteVentas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReporteVentasRequest"
+      responses:
+        "200":
+          description: PDF de ventas generado correctamente
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Error en la solicitud
+        "405":
+          description: Método no permitido
+
 components:
   schemas:
     TemplateRequest:
@@ -87,5 +111,30 @@ components:
             url:
               type: string
               format: uri
-        template:
+            template:
+              type: string
+
+    Venta:
+      type: object
+      properties:
+        fecha:
           type: string
+          example: "2025-09-29"
+        producto:
+          type: string
+          example: "Producto A"
+        cantidad:
+          type: integer
+          example: 2
+        precio:
+          type: number
+          format: float
+          example: 150.50
+
+    ReporteVentasRequest:
+      type: object
+      properties:
+        ventas:
+          type: array
+          items:
+            $ref: "#/components/schemas/Venta"

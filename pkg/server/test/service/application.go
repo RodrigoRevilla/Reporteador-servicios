@@ -16,7 +16,8 @@ func NewApplication() (*app.Application, error) {
 
 	return &app.Application{
 		Commands: app.Commands{
-			GenerarPDF: command.NewGenerarPDFHandler(logger),
+			GenerarPDF:           command.NewGenerarPDFHandler(logger),
+			GenerarReporteVentas: command.NewGenerarReporteVentasHandler(logger),
 		},
 	}, nil
 }

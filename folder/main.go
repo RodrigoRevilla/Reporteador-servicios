@@ -22,6 +22,23 @@ func DeleteFolderLater(folder string, delay time.Duration) {
 	}()
 }
 
+func GenerateReporteVentasPDF() (string, error) {
+	baseFolder := "uuid_storage"
+	newUUID := uuid.New().String()
+	uuidFolder := filepath.Join(baseFolder, newUUID)
+
+	if err := os.MkdirAll(uuidFolder, os.ModePerm); err != nil {
+		return "", fmt.Errorf("error al crear la carpeta %s: %v", uuidFolder, err)
+	}
+
+	pdfFileName := filepath.Join(uuidFolder, fmt.Sprintf("%s.pdf", newUUID))
+
+	DeleteFolderLater(uuidFolder, 3*time.Minute)
+
+	return pdfFileName, nil
+}
+
+
 func GenerateQRCode(data string) (string, string, error) {
 	baseFolder := "uuid_storage"
 

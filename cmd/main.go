@@ -30,6 +30,8 @@ func main() {
 	router.Post("/pdf", httpServer.GeneratePDF)
 	router.Get("/pdf/view", httpServer.ViewPDF)
 
+	router.Post("/pdf/ventas", httpServer.GenerateReporteVentas)
+
 	addr := ":8080"
 	srv := &http.Server{
 		Addr:    addr,

@@ -6,6 +6,7 @@ import (
 
 type Commands struct {
 	GenerarPDF command.GenerarPDFHandler
+	GenerarReporteVentas command.GenerarReporteVentasHandler
 }
 
 type Application struct {

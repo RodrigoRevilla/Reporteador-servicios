@@ -32,6 +32,19 @@ type Template struct {
 	TotalPages int  `json:"totalPages"`
 }
 
+// ESTRUCTURA PARA VENTAS
+type Venta struct {
+	Fecha    string  `json:"fecha"`
+	Producto string  `json:"producto"`
+	Cantidad int     `json:"cantidad"`
+	Precio   float64 `json:"precio"`
+}
+
+type ReporteVentas struct {
+	ID     int     `json:"id"`
+	Ventas []Venta `json:"ventas"`
+}
+
 func Validate(v Data) error {
 	if v.Nombre == "" {
 		return fmt.Errorf("el campo 'nombre' no puede estar vacío")
