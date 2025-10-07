@@ -15,7 +15,27 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
+
+// InventarioItem defines model for InventarioItem.
+type InventarioItem struct {
+	Cantidad  *int     `json:"cantidad,omitempty"`
+	Categoria *string  `json:"categoria,omitempty"`
+	Id        *string  `json:"id,omitempty"`
+	Precio    *float32 `json:"precio,omitempty"`
+	Producto  *string  `json:"producto,omitempty"`
+}
+
+// ReporteInventarioRequest defines model for ReporteInventarioRequest.
+type ReporteInventarioRequest struct {
+	Inventario *[]InventarioItem `json:"inventario,omitempty"`
+}
+
+// ReporteUsuariosActivosRequest defines model for ReporteUsuariosActivosRequest.
+type ReporteUsuariosActivosRequest struct {
+	Usuarios *[]UsuarioActivo `json:"usuarios,omitempty"`
+}
 
 // ReporteVentasRequest defines model for ReporteVentasRequest.
 type ReporteVentasRequest struct {
@@ -43,6 +63,15 @@ type TemplateRequest struct {
 	} `json:"data,omitempty"`
 }
 
+// UsuarioActivo defines model for UsuarioActivo.
+type UsuarioActivo struct {
+	Activo      *bool               `json:"activo,omitempty"`
+	ActivoDesde *openapi_types.Date `json:"activoDesde,omitempty"`
+	Email       *string             `json:"email,omitempty"`
+	Id          *string             `json:"id,omitempty"`
+	Nombre      *string             `json:"nombre,omitempty"`
+}
+
 // Venta defines model for Venta.
 type Venta struct {
 	Cantidad *int     `json:"cantidad,omitempty"`
@@ -54,6 +83,12 @@ type Venta struct {
 // GeneratePDFJSONRequestBody defines body for GeneratePDF for application/json ContentType.
 type GeneratePDFJSONRequestBody = TemplateRequest
 
+// GenerateReporteInventarioJSONRequestBody defines body for GenerateReporteInventario for application/json ContentType.
+type GenerateReporteInventarioJSONRequestBody = ReporteInventarioRequest
+
+// GenerateReporteUsuariosActivosJSONRequestBody defines body for GenerateReporteUsuariosActivos for application/json ContentType.
+type GenerateReporteUsuariosActivosJSONRequestBody = ReporteUsuariosActivosRequest
+
 // GenerateReporteVentasJSONRequestBody defines body for GenerateReporteVentas for application/json ContentType.
 type GenerateReporteVentasJSONRequestBody = ReporteVentasRequest
 
@@ -62,6 +97,12 @@ type ServerInterface interface {
 	// Genera un PDF
 	// (POST /generate)
 	GeneratePDF(w http.ResponseWriter, r *http.Request)
+	// Genera un PDF del reporte de inventario
+	// (POST /pdf/inventario)
+	GenerateReporteInventario(w http.ResponseWriter, r *http.Request)
+	// Genera un PDF del reporte de usuarios activos
+	// (POST /pdf/usuarios-activos)
+	GenerateReporteUsuariosActivos(w http.ResponseWriter, r *http.Request)
 	// Genera un PDF del reporte de ventas
 	// (POST /pdf/ventas)
 	GenerateReporteVentas(w http.ResponseWriter, r *http.Request)
@@ -77,6 +118,18 @@ type Unimplemented struct{}
 // Genera un PDF
 // (POST /generate)
 func (_ Unimplemented) GeneratePDF(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Genera un PDF del reporte de inventario
+// (POST /pdf/inventario)
+func (_ Unimplemented) GenerateReporteInventario(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Genera un PDF del reporte de usuarios activos
+// (POST /pdf/usuarios-activos)
+func (_ Unimplemented) GenerateReporteUsuariosActivos(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -107,6 +160,36 @@ func (siw *ServerInterfaceWrapper) GeneratePDF(w http.ResponseWriter, r *http.Re
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GeneratePDF(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GenerateReporteInventario operation middleware
+func (siw *ServerInterfaceWrapper) GenerateReporteInventario(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GenerateReporteInventario(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GenerateReporteUsuariosActivos operation middleware
+func (siw *ServerInterfaceWrapper) GenerateReporteUsuariosActivos(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GenerateReporteUsuariosActivos(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -263,6 +346,12 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/generate", wrapper.GeneratePDF)
 	})
 	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/pdf/inventario", wrapper.GenerateReporteInventario)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/pdf/usuarios-activos", wrapper.GenerateReporteUsuariosActivos)
+	})
+	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/pdf/ventas", wrapper.GenerateReporteVentas)
 	})
 	r.Group(func(r chi.Router) {
@@ -275,19 +364,23 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

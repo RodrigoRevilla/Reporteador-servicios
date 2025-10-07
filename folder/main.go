@@ -22,6 +22,7 @@ func DeleteFolderLater(folder string, delay time.Duration) {
 	}()
 }
 
+// Generar PDF para reporte de ventas
 func GenerateReporteVentasPDF() (string, error) {
 	baseFolder := "uuid_storage"
 	newUUID := uuid.New().String()
@@ -38,6 +39,39 @@ func GenerateReporteVentasPDF() (string, error) {
 	return pdfFileName, nil
 }
 
+// Generar PDF para reporte de inventario
+func GenerateReporteInventarioPDF() (string, error) {
+	baseFolder := "uuid_storage"
+	newUUID := uuid.New().String()
+	uuidFolder := filepath.Join(baseFolder, newUUID)
+
+	if err := os.MkdirAll(uuidFolder, os.ModePerm); err != nil {
+		return "", fmt.Errorf("error al crear la carpeta %s: %v", uuidFolder, err)
+	}
+
+	pdfFileName := filepath.Join(uuidFolder, fmt.Sprintf("%s.pdf", newUUID))
+
+	DeleteFolderLater(uuidFolder, 3*time.Minute)
+
+	return pdfFileName, nil
+}
+
+// Generar PDF para reporte de usuarios activos
+func GenerateReporteUsuariosActivosPDF() (string, error) {
+	baseFolder := "uuid_storage"
+	newUUID := uuid.New().String()
+	uuidFolder := filepath.Join(baseFolder, newUUID)
+
+	if err := os.MkdirAll(uuidFolder, os.ModePerm); err != nil {
+		return "", fmt.Errorf("error al crear la carpeta %s: %v", uuidFolder, err)
+	}
+
+	pdfFileName := filepath.Join(uuidFolder, fmt.Sprintf("%s.pdf", newUUID))
+
+	DeleteFolderLater(uuidFolder, 3*time.Minute)
+
+	return pdfFileName, nil
+}
 
 func GenerateQRCode(data string) (string, string, error) {
 	baseFolder := "uuid_storage"

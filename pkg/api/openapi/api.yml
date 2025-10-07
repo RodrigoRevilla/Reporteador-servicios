@@ -74,6 +74,54 @@ paths:
         "405":
           description: Método no permitido
 
+  /pdf/inventario:
+    post:
+      summary: Genera un PDF del reporte de inventario
+      description: Recibe un listado de inventario en JSON y genera un PDF
+      operationId: generateReporteInventario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReporteInventarioRequest"
+      responses:
+        "200":
+          description: PDF de inventario generado correctamente
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Error en la solicitud
+        "405":
+          description: Método no permitido
+
+  /pdf/usuarios-activos:
+    post:
+      summary: Genera un PDF del reporte de usuarios activos
+      description: Recibe un listado de usuarios activos en JSON y genera un PDF
+      operationId: generateReporteUsuariosActivos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReporteUsuariosActivosRequest"
+      responses:
+        "200":
+          description: PDF de usuarios activos generado correctamente
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Error en la solicitud
+        "405":
+          description: Método no permitido
+
 components:
   schemas:
     TemplateRequest:
@@ -138,3 +186,59 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Venta"
+
+    InventarioItem:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "INV-001"
+        producto:
+          type: string
+          example: "Laptop"
+        categoria:
+          type: string
+          example: "Electrónica"
+        cantidad:
+          type: integer
+          example: 10
+        precio:
+          type: number
+          format: float
+          example: 12000.00
+
+    ReporteInventarioRequest:
+      type: object
+      properties:
+        inventario:
+          type: array
+          items:
+            $ref: "#/components/schemas/InventarioItem"
+
+    UsuarioActivo:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "USR-123"
+        nombre:
+          type: string
+          example: "Juan Pérez"
+        email:
+          type: string
+          example: "juan.perez@example.com"
+        activoDesde:
+          type: string
+          format: date
+          example: "2025-09-01"
+        activo:
+          type: boolean
+          example: true
+
+    ReporteUsuariosActivosRequest:
+      type: object
+      properties:
+        usuarios:
+          type: array
+          items:
+            $ref: "#/components/schemas/UsuarioActivo"

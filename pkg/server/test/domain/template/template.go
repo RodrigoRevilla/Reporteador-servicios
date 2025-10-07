@@ -59,7 +59,7 @@ func Template(data domain.Template, qrFileName string, pdfFileName string) error
 
 func addHeader(m core.Maroto, data domain.Data) {
 	m.AddRow(30,
-		image.NewFromFileCol(12, "assets/png.png",
+		image.NewFromFileCol(12, "assets/png.jpg",
 			props.Rect{
 				Center:  false,
 				Percent: 100,

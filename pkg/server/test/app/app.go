@@ -5,8 +5,10 @@ import (
 )
 
 type Commands struct {
-	GenerarPDF command.GenerarPDFHandler
-	GenerarReporteVentas command.GenerarReporteVentasHandler
+	GenerarPDF               command.GenerarPDFHandler
+	GenerarReporteVentas     command.GenerarReporteVentasHandler
+	GenerarReporteInventario command.GenerarReporteInventarioHandler
+	GenerarRporteUsuarios    command.GenerarReporteUsuariosActivosHandler
 }
 
 type Application struct {

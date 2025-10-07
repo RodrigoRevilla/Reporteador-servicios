@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"reporteador/pkg/server/test/domain"
+
+    openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 func (pdf TemplateRequest) ToDomain() *domain.Template {
@@ -51,6 +53,46 @@ func (req ReporteVentasRequest) ToDomain() *domain.ReporteVentas {
 	return &reporte
 }
 
+func (req ReporteInventarioRequest) ToDomain() *domain.ReporteInventario {
+	reporte := domain.ReporteInventario{
+		Inventario: make([]domain.Inventario, 0),
+	}
+
+	if req.Inventario != nil {
+		for _, v := range *req.Inventario {
+			reporte.Inventario = append(reporte.Inventario, domain.Inventario{
+				ID:        derefString(v.Id),
+				Producto:  derefString(v.Producto),
+				Categoria: derefString(v.Categoria),
+				Cantidad:  derefInt(v.Cantidad),
+				Precio:    derefFloat32(v.Precio),
+			})
+		}
+	}
+
+	return &reporte
+}
+
+func (req ReporteUsuariosActivosRequest) ToDomain() *domain.ReporteUsuariosActivos {
+	reporte := domain.ReporteUsuariosActivos{
+		UsuariosActivos: make([]domain.UsuarioActivo, 0),
+	}
+
+	if req.Usuarios != nil {
+		for _, u := range *req.Usuarios {
+			reporte.UsuariosActivos = append(reporte.UsuariosActivos, domain.UsuarioActivo{
+				ID:          derefString(u.Id),
+				Nombre:      derefString(u.Nombre),
+				Email:       derefString(u.Email),
+				ActivoDesde: derefDate(u.ActivoDesde),
+				Activo:      derefBool(u.Activo),
+			})
+		}
+	}
+
+	return &reporte
+}
+
 func derefString(s *string) string {
 	if s != nil {
 		return *s
@@ -71,3 +113,19 @@ func derefFloat32(f *float32) float64 {
 	}
 	return 0.0
 }
+
+
+func derefDate(d *openapi_types.Date) string {
+	if d != nil {
+		return d.String()
+	}
+	return ""
+}
+
+func derefBool(b *bool) bool {
+	if b != nil {
+		return *b
+	}
+	return false
+}
+

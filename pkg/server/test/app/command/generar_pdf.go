@@ -41,7 +41,6 @@ func (h *generarPDFHandler) Handle(ctx context.Context, cmd *GenerarPDF) error {
 
 	h.logger.Info("QR generado correctamente", zap.String("ruta_qr", absQRFileName))
 
-
 	err = template.Template(cmd.Data, absQRFileName, pdfFileName)
 	if err != nil {
 		h.logger.Error("Error generando PDF", zap.Error(err))

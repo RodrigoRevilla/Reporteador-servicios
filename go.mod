@@ -9,6 +9,7 @@ require (
 	github.com/go-chi/render v1.0.3
 	github.com/google/uuid v1.6.0
 	github.com/johnfercher/maroto/v2 v2.3.1
+	github.com/oapi-codegen/runtime v1.1.2
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	go.uber.org/zap v1.26.0
 )

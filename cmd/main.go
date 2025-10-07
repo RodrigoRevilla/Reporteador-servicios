@@ -29,8 +29,9 @@ func main() {
 
 	router.Post("/pdf", httpServer.GeneratePDF)
 	router.Get("/pdf/view", httpServer.ViewPDF)
-
 	router.Post("/pdf/ventas", httpServer.GenerateReporteVentas)
+	router.Post("/pdf/inventario", httpServer.GenerateReporteInventario)
+	router.Post("/pdf/usuarios-activos", httpServer.GenerateReporteUsuariosActivos)
 
 	addr := ":8080"
 	srv := &http.Server{

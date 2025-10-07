@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"reflect"
 )
 
 type Data struct {
@@ -45,45 +46,49 @@ type ReporteVentas struct {
 	Ventas []Venta `json:"ventas"`
 }
 
-func Validate(v Data) error {
-	if v.Nombre == "" {
-		return fmt.Errorf("el campo 'nombre' no puede estar vacío")
-	}
-	if v.Cargo == "" {
-		return fmt.Errorf("el campo 'cargo' no puede estar vacío")
-	}
-	if v.Ubicacion == "" {
-		return fmt.Errorf("el campo 'ubicacion' no puede estar vacío")
-	}
-	if v.Obra == "" {
-		return fmt.Errorf("el campo 'obra' no puede estar vacío")
-	}
-	if v.Tramite == "" {
-		return fmt.Errorf("el campo 'tramite' no puede estar vacío")
-	}
-	if v.Name == "" {
-		return fmt.Errorf("el campo 'name' no puede estar vacío")
-	}
-	if v.Num_folio == "" {
-		return fmt.Errorf("el campo 'num_folio' no puede estar vacío")
-	}
-	if v.Num_acta == "" {
-		return fmt.Errorf("el campo 'num_acta' no puede estar vacío")
-	}
-	if v.Levantada == "" {
-		return fmt.Errorf("el campo 'levantada' no puede estar vacío")
-	}
-	if v.Dd == "" {
-		return fmt.Errorf("el campo 'dd' no puede estar vacío")
-	}
-	if v.Mmmm == "" {
-		return fmt.Errorf("el campo 'mmmm' no puede estar vacío")
-	}
-	if v.Yyyy == "" {
-		return fmt.Errorf("el campo 'yyyy' no puede estar vacío")
-	}
-	if v.Url == "" {
-		return fmt.Errorf("el campo 'url' no puede estar vacío")
+// ESTRUCTURA PARA INVENTARIO
+type Inventario struct {
+	ID        string  `json:"id"`
+	Producto  string  `json:"producto"`
+	Categoria string  `json:"categoria"`
+	Cantidad  int     `json:"cantidad"`
+	Precio    float64 `json:"precio"`
+}
+
+type ReporteInventario struct {
+	ID         int          `json:"id"`
+	Inventario []Inventario `json:"inventario"`
+}
+
+// ESTRUCTURA PARA USUARIOS ACTIVOS
+type UsuarioActivo struct {
+	ID          string `json:"id"`
+	Nombre      string `json:"nombre"`
+	ActivoDesde string `json:"activo_desde"`
+	Email       string `json:"email"`
+	Activo      bool   `json:"activo"`
+}
+
+type ReporteUsuariosActivos struct {
+	ID              int             `json:"id"`
+	UsuariosActivos []UsuarioActivo `json:"usuarios"`
+	Limit           int             `json:"limit"`
+	Page            int             `json:"page"`
+	TotalItems      int             `json:"totalItems"`
+	TotalPages      int             `json:"totalPages"`
+}
+
+func Validate(d Data) error {
+	val := reflect.ValueOf(d)
+	typ := reflect.TypeOf(d)
+
+	for i := 0; i < val.NumField(); i++ {
+		campo := typ.Field(i).Tag.Get("json")
+		valor := val.Field(i).String()
+
+		if valor == "" {
+			return fmt.Errorf("el campo '%s' no puede estar vacío", campo)
+		}
 	}
 	return nil
 }
